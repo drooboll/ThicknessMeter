@@ -1,19 +1,20 @@
 #include "Filter.h"
 #include <cmath>
 
-float Filter::a;
-float Filter::b;
-float Filter::prevValue;
+const float Filter::a = 0.1f;
+const float Filter::b = 2.0f;
+float Filter::maxValue;
+const float Filter::averageLevelCoefficient = 0.8f;
+float Filter::inverseMaxPeakValue;
+const float maxPeakCoefficient = 0.2f;
+float Filter::averageLevel;
+float Filter::controlAverageLevel = 0.0f;
+uint16_t Filter::averageCount = 0;
 
-bool Filter::isFirstCalculation;
+
+bool Filter::isFirstCalculation = true;
 
 Filter* Filter::self;
-
-Filter::Filter(){
-    this->a = 0.1f;
-    this->b = 2.0f;
-    this->isFirstCalculation = true;
-}
 
 Filter* Filter::getInstance() {
     if (self == nullptr){
@@ -26,20 +27,39 @@ float Filter::calculateNext(float signalValue) {
     if (isFirstCalculation){
         isFirstCalculation = false;
 
-        prevValue = signalValue;
+        maxValue = signalValue;
+        inverseMaxPeakValue = (1.0f / maxPeakCoefficient) / maxValue;
+        averageLevel = signalValue * averageLevelCoefficient;
 
         return signalValue;
     }
 
-    prevValue = signalValue / (a + b * std::fabs(prevValue));
+    float centeredValue = signalValue - averageLevel;
 
-    return prevValue;
+    float normalizedValue = (centeredValue) * inverseMaxPeakValue;
+
+    return centeredValue / (a + b * std::fabs(normalizedValue)) + averageLevel;
 }
 
-float Filter::getPrevValue() {
+float Filter::getMaxValue() {
     if (isFirstCalculation) {
         return 0;
     }
 
-    return prevValue;
+    return maxValue;
+}
+
+float Filter::normalize(float signalValue, float controlValue) {
+    float calculatedAverageLevel;
+    if (averageCount){
+        calculatedAverageLevel = controlAverageLevel / averageCount;
+    } else {
+        calculatedAverageLevel = controlValue;
+    }
+
+    controlAverageLevel += controlValue;
+    averageCount++;
+
+    return signalValue + controlValue - calculatedAverageLevel;
+
 }

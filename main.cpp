@@ -5,15 +5,17 @@
 int main() {
     auto filter = Filter::getInstance();
 
-    auto fileReader = new FileReader("C:\\Users\\Valery\\CLionProjects\\thickness-meter-test\\capture.csv");
+    auto fileReader = new FileReader(R"(C:\Users\Valery\CLionProjects\thickness-meter-test\capture.csv)");
 
     float x, y;
 
     bool isRead;
+
+    std::fstream fout("out.csv", std::fstream::out);
     do {
         isRead = fileReader->getNext(&x, &y);
 
-        std::cout << filter->calculateNext(x) << ' ' << y << std::endl;
+        fout << filter->calculateNext(filter->normalize(x, y)) << std::endl;
     } while(isRead);
 
     return 0;
