@@ -10,17 +10,29 @@ private:
     static uint16_t insertIndex;
     static const float highThresholdCoefficient;
     static const float lowThresholdCoefficient;
+    static const float error;
     static float normalLevel;
     static float windowSum;
+    static bool isFirstExtremas;
+    static bool wasMaxima;
+
+    static float maximumsSum;
+    static uint16_t maximumsCount;
+
+    static float minimumsSum;
+    static uint16_t minimumsCount;
 
     Meter() = default;
     static Meter* self;
 
     void windowShiftLeft();
     float getWindowAverage();
+    float getMaximumsAverage();
+    float getMinimumsAverage();
+    void checkWindow();
 
 public:
-    Meter* getInstance();
+    static Meter* getInstance();
     void addValue(float value);
     uint16_t getExtremaCount();
     float getThickness();
