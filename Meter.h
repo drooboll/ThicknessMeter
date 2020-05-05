@@ -15,6 +15,8 @@ private:
     static float windowSum;
     static bool isFirstExtremas;
     static bool wasMaxima;
+    static float partialThickness;
+    static float lastNormalizedValue;
 
     static float maximumsSum;
     static uint16_t maximumsCount;
@@ -30,11 +32,12 @@ private:
     float getMaximumsAverage();
     float getMinimumsAverage();
     void checkWindow();
+    float calcPartialThickness(float signalValue);
+    float getInverseByTable(float value);
 
 public:
     static Meter* getInstance();
     void addValue(float value);
     uint16_t getExtremaCount();
     float getThickness();
-
 };
