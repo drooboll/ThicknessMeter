@@ -61,5 +61,4 @@ float Filter::normalize(float signalValue, float controlValue) {
     averageCount++;
 
     return signalValue + controlValue - calculatedAverageLevel;
-
 }

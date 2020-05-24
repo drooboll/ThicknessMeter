@@ -15,13 +15,17 @@ int main() {
 
     std::fstream fout("out.csv", std::fstream::out);
 
+    int count = 0;
     do {
         isRead = fileReader->getNext(&x, &y);
 
-        float value = filter->calculateNext(filter->normalize(x, y));
+        float normalizedValue = filter->normalize(x, y);
+        float value = filter->calculateNext(normalizedValue);
         meter->addValue(value);
-        fout << value << ", "<< meter->getExtremaCount() << " " << meter->getThickness() << std::endl;
-    } while(isRead);
+        if (count)
+            fout << x << ", " << y << ", " << normalizedValue << ", " << value << ", "<< meter->getExtremaCount() << ", " << meter->getThickness() << std::endl;
+        count++;
+    } while(count < 65000);
 
     return 0;
 }

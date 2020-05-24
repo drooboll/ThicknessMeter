@@ -21,7 +21,7 @@ uint16_t inverseValueTable[] = {
 float Meter::window[WINDOW_SIZE];
 uint16_t Meter::insertIndex;
 const float Meter::highThresholdCoefficient = 0.85f;
-const float Meter::lowThresholdCoefficient = 0.735f;
+const float Meter::lowThresholdCoefficient = 0.72f;
 const float Meter::error = 0.02f;
 float Meter::normalLevel;
 float Meter::windowSum;
@@ -29,7 +29,6 @@ Meter* Meter::self;
 bool Meter::isFirstExtremas = true;
 bool Meter::wasMaxima = true;
 float Meter::partialThickness = 0.0f;
-float Meter::lastNormalizedValue = 0.0f;
 
 float Meter::maximumsSum;
 uint16_t Meter::maximumsCount;
@@ -141,7 +140,7 @@ void Meter::checkWindow() {
     }
 
     if (getExtremaCount() >= 2) {
-        partialThickness = calcPartialThickness(window[WINDOW_SIZE/2]);
+        calcPartialThickness(window[WINDOW_SIZE/2]);
     }
 }
 
@@ -186,7 +185,6 @@ float Meter::getInverseByTable(float value) {
     }
 
     tableValue /= (float) tableDivider;
-    lastNormalizedValue = value;
 
     return tableValue;
 }
@@ -207,5 +205,12 @@ float Meter::calcPartialThickness(float signalValue) {
         normalizedValue = 1 - (normalizedValue + 1) / 2;
     else
         normalizedValue = (normalizedValue + 1) / 2;
-    return getInverseByTable(normalizedValue);
+
+    float measuredThickness = getInverseByTable(normalizedValue);
+
+    if (measuredThickness > partialThickness){
+        partialThickness = measuredThickness;
+    }
+
+    return partialThickness;
 }
