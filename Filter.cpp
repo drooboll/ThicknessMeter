@@ -1,5 +1,5 @@
 #include "Filter.h"
-#include <cmath>
+#include <math.h>
 
 const float Filter::a = 0.1f;
 const float Filter::b = 2.0f;
@@ -13,15 +13,6 @@ uint16_t Filter::averageCount = 0;
 
 
 bool Filter::isFirstCalculation = true;
-
-Filter* Filter::self;
-
-Filter* Filter::getInstance() {
-    if (self == nullptr){
-        self = new Filter();
-    }
-    return self;
-}
 
 float Filter::calculateNext(float signalValue) {
     if (isFirstCalculation){
