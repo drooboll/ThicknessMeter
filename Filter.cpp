@@ -38,7 +38,7 @@ float Filter::calculateNext(float signalValue) {
 
     float normalizedValue = (centeredValue) * inverseMaxPeakValue;
 
-    return centeredValue / (a + b * std::fabs(normalizedValue)) + averageLevel;
+    return centeredValue / (a + b * (float)fabs(normalizedValue)) + averageLevel;
 }
 
 float Filter::getMaxValue() {

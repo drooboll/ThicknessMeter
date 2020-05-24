@@ -1,6 +1,8 @@
-#include <cmath>
+#include <math.h>
 #include <iostream>
 #include "Meter.h"
+
+constexpr double delta = 0.001;
 
 const uint16_t tableCoefficient = 99;
 const uint16_t tableDivider = 10000;
@@ -106,7 +108,7 @@ void Meter::checkWindow() {
             }
         }
 
-        if (std::fabs(minima - window[WINDOW_SIZE/2]) < 0.01f){
+        if (fabs(minima - window[WINDOW_SIZE/2]) < delta){
             minimumsSum += minima;
             minimumsCount++;
 
@@ -125,7 +127,7 @@ void Meter::checkWindow() {
             }
         }
 
-        if (std::fabs(maxima - window[WINDOW_SIZE/2]) < 0.01f){
+        if (fabs(maxima - window[WINDOW_SIZE/2]) < delta){
             maximumsSum += maxima;
             maximumsCount++;
 
@@ -174,7 +176,7 @@ float Meter::getInverseByTable(float value) {
 
     float tableValue;
 
-    if (std::abs(normalizedValue - floorValue) < 0.01f){
+    if (fabs(normalizedValue - floorValue) < delta){
         tableValue = inverseValueTable[(uint16_t) (floorValue + tableShift)];
     } else {
         float highIndexPart = normalizedValue - floorValue;
