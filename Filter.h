@@ -1,9 +1,10 @@
-#pragma once
-
-#include <cstdint>
+#include <stdint.h>
+#include "Singleton.h"
 
 class Filter {
+    friend class Singleton<Filter>;
 private:
+    constexpr Filter() {};
     static const float a;
     static const float b;
     static const float averageLevelCoefficient;
@@ -15,16 +16,14 @@ private:
     static float controlAverageLevel;
     static uint16_t averageCount;
 
-    static Filter* self;
-
-    Filter() = default;
-
 public:
-    static Filter* getInstance();
+    const Filter & operator=(const Filter &) = delete ;
 
     float calculateNext(float signalValue);
 
     float normalize(float signalValue, float controlValue);
 
     float getMaxValue();
+
+    constexpr Filter(const Filter &) = default ;
 };

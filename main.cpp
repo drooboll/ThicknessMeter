@@ -1,31 +1,50 @@
-#include <iostream>
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
+#include "Singleton.h"
+#include "SPI.h"
 #include "Filter.h"
-#include "FileReader.h"
 #include "Meter.h"
+#include "AD7792.h"
+#include "UARTComm.h"
+
+
+ISR(USART_RX_vect){
+    auto uart = Singleton<UARTComm>::getInstance();
+    uart.onRxComplete();
+}
+
+ISR(USART_TX_vect){
+    auto uart = Singleton<UARTComm>::getInstance();
+    uart.onTxComplete();
+}
 
 int main() {
-    auto filter = Filter::getInstance();
-    auto meter = Meter::getInstance();
+    auto spi = Singleton<SPI>::getInstance();
+    auto adc = Singleton<AD7792>::getInstance();
+    auto uart = Singleton<UARTComm>::getInstance();
 
-    auto fileReader = new FileReader(R"(C:\Users\Valery\CLionProjects\thickness-meter-test\capture.csv)");
+    auto filter = Singleton<Filter>::getInstance();
+    auto meter = Singleton<Meter>::getInstance();
 
-    float x, y;
+    uart.init(115200);
+    uart.setMeter(meter);
 
-    bool isRead;
+    sei();
 
-    std::fstream fout("out.csv", std::fstream::out);
+    spi.init(AD7792::CS_PIN);
 
-    int count = 0;
-    do {
-        isRead = fileReader->getNext(&x, &y);
+    adc.setSPI(spi);
+    adc.reset();
+    adc.calibrateChannels();
 
-        float normalizedValue = filter->normalize(x, y);
-        float value = filter->calculateNext(normalizedValue);
-        meter->addValue(value);
-        if (count)
-            fout << x << ", " << y << ", " << normalizedValue << ", " << value << ", "<< meter->getExtremaCount() << ", " << meter->getThickness() << std::endl;
-        count++;
-    } while(count < 65000);
+    while (true) {
+        adc.startConversion(0);
+        float mainValue = adc.getValue();
+        adc.startConversion(1);
+        float refValue = adc.getValue();
+        meter.addValue(filter.calculateNext(filter.normalize(mainValue, refValue)));
+    };
 
     return 0;
 }
