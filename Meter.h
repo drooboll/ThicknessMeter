@@ -35,6 +35,7 @@ private:
     static bool isFirstPair;
     static bool wasMaxima;
     static float partialThickness;
+    static float speed;
 
     static float maximumsSum;
     static uint16_t maximumsCount;
@@ -54,6 +55,7 @@ public:
     void addValue(float value);
     uint16_t getExtremaCount();
     float getThickness();
+    float getSpeed();
     const Meter & operator=(const Meter &) = delete ;
 
     constexpr Meter(const Meter &) = default ;

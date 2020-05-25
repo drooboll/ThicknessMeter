@@ -3,6 +3,7 @@
 #include "Meter.h"
 
 constexpr double delta = 0.001;
+constexpr float timeConstant = 3.0f / 123.0f;
 
 const uint16_t tableCoefficient = 99;
 const uint16_t tableDivider = 10000;
@@ -15,6 +16,7 @@ const float Meter::lowThresholdCoefficient = 0.72f;
 const double Meter::error = 0.02;
 float Meter::normalLevel;
 float Meter::windowSum;
+float Meter::speed;
 
 bool Meter::isFirstPair = true;
 bool Meter::wasMaxima = true;
@@ -192,8 +194,13 @@ float Meter::calcPartialThickness(float signalValue) {
     float measuredThickness = getInverseByTable(normalizedValue);
 
     if (measuredThickness > partialThickness){
+        speed = (measuredThickness - partialThickness) / timeConstant;
         partialThickness = measuredThickness;
     }
 
     return partialThickness;
+}
+
+float Meter::getSpeed() {
+    return speed;
 }

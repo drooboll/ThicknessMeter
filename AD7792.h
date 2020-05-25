@@ -52,7 +52,7 @@ public:
     constexpr AD7792(const AD7792 &) = default ;
 
 private:
-    constexpr static float vrefValue = 1.04f;
+    constexpr static float vrefValue = 1.17f;
     void calibrateChannel(uint8_t channel);
     uint8_t readStatus();
     SPI* spi;

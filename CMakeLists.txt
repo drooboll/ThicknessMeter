@@ -18,7 +18,6 @@ set(CMAKE_CXX_STANDARD 14)
 # Sample CMakeLists.txt for a simple AVR project based on the toolchain
 ##################################################################################
 
-cmake_minimum_required(VERSION 2.8)
 
 ### TOOLCHAIN SETUP AREA #################################################
 # Set any variables used in the toolchain prior project() call. In that
@@ -134,7 +133,7 @@ add_definitions("-fno-threadsafe-statics")
 ##################################################################################
 # add AVR executable
 ##################################################################################
-set(SOURCE_FILES main.cpp Filter.cpp Filter.h Meter.cpp Meter.h SPI.cpp SPI.h AD7792.cpp AD7792.h Singleton.h)
+set(SOURCE_FILES main.cpp Filter.cpp Filter.h Meter.cpp Meter.h SPI.cpp SPI.h AD7792.cpp AD7792.h Singleton.h UARTComm.h UARTComm.cpp)
 add_avr_executable(
         thickness_meter_test ${SOURCE_FILES}
 )
